@@ -917,7 +917,7 @@ class resnet_v1_101_manet_rfcn(Symbol):
             data=rpn_cls_act, shape=(0, 2 * num_anchors, -1, 0), name='rpn_cls_act_reshape')
 
         if cfg.TRAIN.CXX_PROPOSAL:
-            rois = mx.contrib.sym.Proposal(
+            rois = mx.symbol.contrib.Proposal(
                 cls_prob=rpn_cls_act_reshape, bbox_pred=rpn_bbox_pred, im_info=im_info, name='rois',
                 feature_stride=cfg.network.RPN_FEAT_STRIDE, scales=tuple(cfg.network.ANCHOR_SCALES),
                 ratios=tuple(cfg.network.ANCHOR_RATIOS),
@@ -1007,25 +1007,25 @@ class resnet_v1_101_manet_rfcn(Symbol):
         rfcn_bbox = mx.sym.Convolution(data=agg_feats[1], kernel=(1, 1), num_filter=7 * 7 * 4 * num_reg_classes,
                                        name="rfcn_bbox")
 
-        psroipooled_cls_rois_pixel = mx.contrib.sym.PSROIPooling(name='psroipooled_cls_rois_pixel', data=rfcn_cls_slice[0], rois=rois,
+        psroipooled_cls_rois_pixel = mx.symbol.contrib.PSROIPooling(name='psroipooled_cls_rois_pixel', data=rfcn_cls_slice[0], rois=rois,
                                                            group_size=7,
                                                            pooled_size=7,
                                                            output_dim=num_classes, spatial_scale=0.0625)
-        psroipooled_cls_rois_reference = mx.contrib.sym.PSROIPooling(name='psroipooled_cls_rois_reference', data=rfcn_cls_slice[1], rois=rois,
+        psroipooled_cls_rois_reference = mx.symbol.contrib.PSROIPooling(name='psroipooled_cls_rois_reference', data=rfcn_cls_slice[1], rois=rois,
                                                            group_size=7,
                                                            pooled_size=7,
                                                            output_dim=num_classes, spatial_scale=0.0625)
-        psroipooled_cls_rois_bef = mx.contrib.sym.PSROIPooling(name='psroipooled_cls_rois_bef', data=rfcn_cls_slice[2], rois=rois_nearby[0],
+        psroipooled_cls_rois_bef = mx.symbol.contrib.PSROIPooling(name='psroipooled_cls_rois_bef', data=rfcn_cls_slice[2], rois=rois_nearby[0],
                                                            group_size=7,
                                                            pooled_size=7,
                                                            output_dim=num_classes, spatial_scale=0.0625)
-        psroipooled_cls_rois_aft = mx.contrib.sym.PSROIPooling(name='psroipooled_cls_rois_aft', data=rfcn_cls_slice[3], rois=rois_nearby[1],
+        psroipooled_cls_rois_aft = mx.symbol.contrib.PSROIPooling(name='psroipooled_cls_rois_aft', data=rfcn_cls_slice[3], rois=rois_nearby[1],
                                                            group_size=7,
                                                            pooled_size=7,
                                                            output_dim=num_classes, spatial_scale=0.0625)
 
 
-        psroipooled_loc_rois = mx.contrib.sym.PSROIPooling(name='psroipooled_loc_rois', data=rfcn_bbox, rois=rois,
+        psroipooled_loc_rois = mx.symbol.contrib.PSROIPooling(name='psroipooled_loc_rois', data=rfcn_bbox, rois=rois,
                                                            group_size=7,
                                                            pooled_size=7,
                                                            output_dim=8, spatial_scale=0.0625)
@@ -1037,7 +1037,7 @@ class resnet_v1_101_manet_rfcn(Symbol):
         if cfg.TRAIN.USE_OCCLUSION:
         # predict probability of occlusion
             rfcn_occluded = mx.sym.Convolution(data=mx.sym.BlockGrad(cur_conv_feats[1]), kernel=(1, 1), num_filter=7 * 7 * 2, name="rfcn_occluded")
-            psroipooled_occluded_rois = mx.contrib.sym.PSROIPooling(name='psroipooled_occluded_rois', data=rfcn_occluded, rois=rois,
+            psroipooled_occluded_rois = mx.symbol.contrib.PSROIPooling(name='psroipooled_occluded_rois', data=rfcn_occluded, rois=rois,
                                                             group_size=7,
                                                             pooled_size=7,
                                                             output_dim=2, spatial_scale=0.0625)
@@ -1188,7 +1188,7 @@ class resnet_v1_101_manet_rfcn(Symbol):
         rpn_cls_prob_reshape = mx.sym.Reshape(
             data=rpn_cls_prob, shape=(0, 2 * num_anchors, -1, 0), name='rpn_cls_prob_reshape')
         if cfg.TEST.CXX_PROPOSAL:
-            rois = mx.contrib.sym.Proposal(
+            rois = mx.symbol.contrib.Proposal(
                 cls_prob=rpn_cls_prob_reshape, bbox_pred=rpn_bbox_pred, im_info=im_info, name='rois',
                 feature_stride=cfg.network.RPN_FEAT_STRIDE, scales=tuple(cfg.network.ANCHOR_SCALES),
                 ratios=tuple(cfg.network.ANCHOR_RATIOS),
@@ -1258,7 +1258,7 @@ class resnet_v1_101_manet_rfcn(Symbol):
         rfcn_bbox = mx.sym.Convolution(data=agg_feats[1], kernel=(1, 1), num_filter=7 * 7 * 4 * num_reg_classes,
                                        name="rfcn_bbox")
 
-        psroipooled_cls_rois_pixel = mx.contrib.sym.PSROIPooling(name='psroipooled_cls_rois_pixel', data=rfcn_cls_slice[cfg.TEST.KEY_FRAME_INTERVAL], rois=rois,
+        psroipooled_cls_rois_pixel = mx.symbol.contrib.PSROIPooling(name='psroipooled_cls_rois_pixel', data=rfcn_cls_slice[cfg.TEST.KEY_FRAME_INTERVAL], rois=rois,
                                                            group_size=7,
                                                            pooled_size=7,
                                                            output_dim=num_classes, spatial_scale=0.0625)
@@ -1267,19 +1267,19 @@ class resnet_v1_101_manet_rfcn(Symbol):
         psroipooled_cls_rois_mean = 0
         for i in range(data_range):
             if i == cfg.TEST.KEY_FRAME_INTERVAL:
-                psroipooled_cls_rois = mx.contrib.sym.PSROIPooling(name='psroipooled_cls_rois',
+                psroipooled_cls_rois = mx.symbol.contrib.PSROIPooling(name='psroipooled_cls_rois',
                                                                    data=rfcn_cls_slice[data_range],
                                                                    rois=rois,
                                                                    group_size=7, pooled_size=7,
                                                                    output_dim=num_classes, spatial_scale=0.0625)
-                psroipooled_cls_rois_mean += psroipooled_cls_rois / 3.0
+                psroipooled_cls_rois_mean = psroipooled_cls_rois_mean + psroipooled_cls_rois / 3.0
             else:
-                psroipooled_cls_rois = mx.contrib.sym.PSROIPooling(name='psroipooled_cls_rois',
+                psroipooled_cls_rois = mx.symbol.contrib.PSROIPooling(name='psroipooled_cls_rois',
                                                                    data=rfcn_cls_slice[i],
                                                                    rois=rois_nearby[i],
                                                                    group_size=7, pooled_size=7,
                                                                    output_dim=num_classes, spatial_scale=0.0625)
-                psroipooled_cls_rois_mean += psroipooled_cls_rois * 2.0 / 3.0 / (data_range-1)
+                psroipooled_cls_rois_mean = psroipooled_cls_rois_mean + psroipooled_cls_rois * 2.0 / 3.0 / (data_range-1)
 
         cls_score_instance = mx.sym.Pooling(name='ave_cls_scors_instance', data=psroipooled_cls_rois_mean, pool_type='avg',
                                    global_pool=True,
@@ -1291,7 +1291,7 @@ class resnet_v1_101_manet_rfcn(Symbol):
             # predict probability of occlusion
             cur_feats = mx.sym.SliceChannel(cur_feat, axis=1, num_outputs=2)
             rfcn_occluded = mx.sym.Convolution(data=cur_feats[1], kernel=(1, 1), num_filter=7 * 7 * 2, name="rfcn_occluded")
-            psroipooled_occluded_rois = mx.contrib.sym.PSROIPooling(name='psroipooled_occluded_rois', data=rfcn_occluded, rois=rois,
+            psroipooled_occluded_rois = mx.symbol.contrib.PSROIPooling(name='psroipooled_occluded_rois', data=rfcn_occluded, rois=rois,
                                                             group_size=7,
                                                             pooled_size=7,
                                                             output_dim=2, spatial_scale=0.0625)
@@ -1323,7 +1323,7 @@ class resnet_v1_101_manet_rfcn(Symbol):
         cls_score_combine = mx.sym.Reshape(name='cls_score_reshape', data=cls_score_combine, shape=(-1, num_classes))
         cls_prob = mx.sym.SoftmaxActivation(name='cls_prob', data=cls_score_combine)
 
-        psroipooled_loc_rois = mx.contrib.sym.PSROIPooling(name='psroipooled_loc_rois', data=rfcn_bbox, rois=rois,
+        psroipooled_loc_rois = mx.symbol.contrib.PSROIPooling(name='psroipooled_loc_rois', data=rfcn_bbox, rois=rois,
                                                            group_size=7, pooled_size=7,
                                                            output_dim=8, spatial_scale=0.0625)
         bbox_pred = mx.sym.Pooling(name='ave_bbox_pred_rois', data=psroipooled_loc_rois, pool_type='avg',

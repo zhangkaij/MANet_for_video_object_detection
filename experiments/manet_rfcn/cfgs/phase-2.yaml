@@ -66,13 +66,13 @@ TRAIN:
   lr: 0.00025
   lr_step: '2.333'
   warmup: false
-  begin_epoch: 1
+  begin_epoch: 0
   end_epoch: 3
   model_prefix: 'manet_rfcn_vid'
   # whether predict occlusion
   USE_OCCLUSION: False
   # whether resume training
-  RESUME: true
+  RESUME: False
   # whether flip image
   FLIP: true
   # whether shuffle image

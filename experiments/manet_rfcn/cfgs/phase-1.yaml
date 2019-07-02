@@ -60,7 +60,7 @@ dataset:
   root_path: "./data"
   test_image_set: VID_val_videos
   proposal: rpn
-  motion_iou_path: '../lib/dataset/imagenet_vid_groundtruth_motion_iou.mat'
+  motion_iou_path: './lib/dataset/imagenet_vid_groundtruth_motion_iou.mat'
   enable_detailed_eval: true
 TRAIN:
   lr: 0.00025
